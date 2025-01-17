@@ -2,12 +2,19 @@ FROM php:8.3.15-apache-bookworm AS base
 
 LABEL org.opencontainers.image.authors="chndv@tuta.io"
 
+EXPOSE 80/tcp 443/tcp
+
+ENV TZ="Europe/Moscow"
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    jq \
+    wget \
     libfreetype-dev \
     libicu-dev \
     libbz2-dev \
     libzip-dev \
     libldap2-dev \
+    tzdata \
     && docker-php-ext-install gd \
     && docker-php-ext-install intl \
     && docker-php-ext-install mysqli \
@@ -18,16 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install opcache \
     && rm -rf /var/lib/apt/lists/*
 
-RUN a2enmod rewrite
+COPY ./scripts /opt/scripts
 
-COPY --chown=www-data:www-data ./glpi /var/www/html/glpi
+RUN chmod +x /opt/scripts/entrypoint.sh && chmod +x /opt/scripts/glpi.sh && /opt/scripts/glpi.sh
 
-COPY 000-default.conf /etc/apache2/sites-available/
-
-COPY entrypoint.sh /opt/
-
-RUN chmod +x /opt/entrypoint.sh
-
-ENTRYPOINT [ "/opt/entrypoint.sh" ]
-
-EXPOSE 80/tcp 443/tcp
+ENTRYPOINT [ "/opt/scripts/entrypoint.sh" ]
