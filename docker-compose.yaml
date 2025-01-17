@@ -1,0 +1,25 @@
+services:
+    glpi:
+        container_name: glpi
+        image: glpi:10.0.17
+        restart: always
+        # build:
+        #     context: .
+        #     dockerfile: Dockerfile
+        #     target: base
+        ports:
+            - "${PORT}:80"
+        volumes:
+            - glpi-config:/var/www/html/glpi/config
+            - glpi-data:/var/www/html/glpi/files
+    db:
+        image: mysql:8.4.3
+        environment:
+            - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+        volumes:
+            - db-data:/var/lib/mysql:rw
+
+volumes:
+    db-data:
+    glpi-config:
+    glpi-data:
