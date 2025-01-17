@@ -14,7 +14,7 @@ echo "session.cookie_httponly = on" >/usr/local/etc/php/conf.d/php.ini
 echo "date.timezone = Europe/Moscow" > /usr/local/etc/php/conf.d/timezone.ini
 
 # Установка задания cron GLPI
-echo "* * * * * www-data /usr/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >/etc/cron.d/glpi
+echo "* * * * * www-data /usr/local/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >/etc/cron.d/glpi
 
 # Настройка apache
 echo -e "<VirtualHost *:80>\n\tDocumentRoot /var/www/html/glpi/public\n\n\t<Directory /var/www/html/glpi/public>\n\t\tRequire all granted\n\t\tRewriteEngine On\n\t\tRewriteCond %{REQUEST_FILENAME} !-f\n\t\n\t\tRewriteRule ^(.*)$ index.php [QSA,L]\n\t</Directory>\n\n\tErrorLog /var/log/apache2/error-glpi.log\n\tLogLevel warn\n\tCustomLog /var/log/apache2/access-glpi.log combined\n</VirtualHost>" > /etc/apache2/sites-available/000-default.conf
