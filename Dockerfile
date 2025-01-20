@@ -1,8 +1,11 @@
 FROM php:8.3.15-apache-bookworm AS base
 
-LABEL org.opencontainers.image.authors="chndv@tuta.io"
+LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
+LABEL org.opencontainers.image.version="10.0.17"
 
 ENV TZ="Europe/Moscow"
+
+COPY ./scripts /opt/scripts
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
@@ -23,11 +26,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install ldap \
     && docker-php-ext-install opcache \
     && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-
-COPY ./scripts /opt/scripts
-
-RUN chmod +x /opt/scripts/entrypoint.sh && chmod +x /opt/scripts/glpi.sh && /opt/scripts/glpi.sh
+    && apt-get clean \
+    && chmod +x /opt/scripts/entrypoint.sh \
+    && chmod +x /opt/scripts/glpi.sh \
+    && /opt/scripts/glpi.sh
 
 EXPOSE 80/tcp 443/tcp
 
