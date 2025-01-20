@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 VERSION_GLPI=10.0.17
 TAR_GLPI=glpi-$VERSION_GLPI.tgz
@@ -13,5 +14,3 @@ else
     chown -R www-data:www-data /var/www/html/glpi
     rm -rf /opt/${TAR_GLPI}
 fi
-
-apache2ctl -D FOREGROUND
