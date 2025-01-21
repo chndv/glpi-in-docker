@@ -1,6 +1,5 @@
 services:
     glpi:
-        container_name: glpi
         image: chndv/glpi:10.0.17
         hostname: glpi.lan
         restart: always
@@ -9,7 +8,7 @@ services:
             dockerfile: Dockerfile
             target: base
         ports:
-            - "${PORT}:80"
+            - "80"
         volumes:
             - glpi-data:/var/www/html/glpi
     db:
