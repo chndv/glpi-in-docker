@@ -5,6 +5,8 @@ LABEL org.opencontainers.image.version="10.0.17"
 
 ARG GLPI_VERSION="10.0.17"
 
+WORKDIR /var/www/html/glpi
+
 # Скачивание
 ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
 
@@ -19,11 +21,12 @@ RUN apk update \
     && docker-php-ext-install opcache \
     && apk add openldap-dev && docker-php-ext-install ldap \
     && apk add nginx \
-    && rm -rf /var/cache/apk/* 
+    && rm -rf /var/cache/apk/*
 
 # Распаковка
 RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
     && chown -R www-data:www-data /var/www/html/glpi \
+    && rm -f /var/www/html/glpi/install/install.php \
     && rm -rf /src
 
 # Настройка пакетов
@@ -35,4 +38,4 @@ RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
 
 EXPOSE 80/tcp
 
-CMD crond -b && php-fpm -DR && nginx -g 'daemon off;' 
+CMD crond -b && php-fpm -DR && nginx -g 'daemon off;'
