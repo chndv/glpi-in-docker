@@ -1,6 +1,6 @@
 services:
     glpi:
-        image: chndv/glpi:10.0.17
+        image: glpi:alpine
         build:
             context: .
             dockerfile: Dockerfile
@@ -10,14 +10,22 @@ services:
         volumes:
             - app-files:/var/www/html/glpi/files
             - app-config:/var/www/html/glpi/config
+            - app-plugins:/var/www/html/glpi/plugins
     db:
         image: mysql:8.4.3
         environment:
             - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
         volumes:
             - db-data:/var/lib/mysql
-
+    phpmyadmin:
+        image: phpmyadmin:latest
+        container_name: phpmyadmin
+        ports:
+           - 8080:80
+        environment:
+            - PMA_ARBITRARY=1
 volumes:
     db-data:
     app-files:
     app-config:
+    app-plugins:

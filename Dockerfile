@@ -1,9 +1,14 @@
-FROM php:8.3.15-fpm-alpine AS base
+FROM php:8.3-fpm-alpine
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
 LABEL org.opencontainers.image.version="10.0.17"
 
 ARG GLPI_VERSION="10.0.17"
+
+# install and docker-entrypoint.sh dependencies
+RUN apk add --no-cache \
+    bash \
+    tzdata
 
 WORKDIR /var/www/html/glpi
 
@@ -38,4 +43,8 @@ RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
 
 EXPOSE 80/tcp
 
-CMD crond -b && php-fpm -DR && nginx -g 'daemon off;'
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+USER root
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+CMD php-fpm
