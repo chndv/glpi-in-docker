@@ -1,16 +1,14 @@
-# FROM php:8.3.15-apache-bookworm AS base
 FROM php:8.3.15-fpm-alpine AS base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
 LABEL org.opencontainers.image.version="10.0.17"
 
-ENV TZ="Europe/Moscow"
+ARG GLPI_VERSION="10.0.17"
 
-COPY ./scripts /opt/scripts
+# Скачивание
+ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
 
-ADD https://github.com/glpi-project/glpi/releases/download/10.0.17/glpi-10.0.17.tgz /opt/
-
-# Установка PHP-дополнений
+# Установка пакетов
 RUN apk update \
     && apk add libzip-dev libpng-dev && docker-php-ext-install gd \
     && apk add icu-dev && docker-php-ext-install intl \
@@ -21,9 +19,20 @@ RUN apk update \
     && docker-php-ext-install opcache \
     && apk add openldap-dev && docker-php-ext-install ldap \
     && apk add nginx \
-    && rm -rf /var/cache/apk/* \
-    && chmod +x /opt/scripts/entrypoint.sh
+    && rm -rf /var/cache/apk/* 
+
+# Распаковка
+RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
+    && chown -R www-data:www-data /var/www/html/glpi \
+    && rm -rf /src
+
+# Настройка пакетов
+## nginx
+COPY default.conf /etc/nginx/http.d/default.conf
+## php, cron
+RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
+    && echo "* * * * * www-data /usr/local/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root
 
 EXPOSE 80/tcp
 
-ENTRYPOINT /opt/scripts/entrypoint.sh && php-fpm
+CMD crond -b && php-fpm -DR && nginx -g 'daemon off;' 
