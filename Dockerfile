@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.version="10.0.17"
 
 ARG GLPI_VERSION="10.0.17"
 
-# install and docker-entrypoint.sh dependencies
+# Установка зависимостей docker-entrypoint.sh
 RUN apk add --no-cache \
     bash
 
@@ -27,9 +27,10 @@ RUN apk update \
     && apk add nginx \
     && rm -rf /var/cache/apk/*
 
-# Распаковка
+# Распаковка кода GLPI
 RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
     && chown -R www-data:www-data /var/www/html/glpi \
+    # Закомментировать эту строку, если нужен графический метод установки 
     && rm -f /var/www/html/glpi/install/install.php \
     && rm -rf /src
 
