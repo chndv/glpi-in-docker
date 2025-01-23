@@ -7,8 +7,7 @@ ARG GLPI_VERSION="10.0.17"
 
 # install and docker-entrypoint.sh dependencies
 RUN apk add --no-cache \
-    bash \
-    tzdata
+    bash
 
 WORKDIR /var/www/html/glpi
 
@@ -45,6 +44,5 @@ EXPOSE 80/tcp
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-USER root
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD php-fpm
