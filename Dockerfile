@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.3-fpm-alpine as base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
 LABEL org.opencontainers.image.version="10.0.17"

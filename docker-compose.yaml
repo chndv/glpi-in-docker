@@ -6,7 +6,8 @@ services:
             dockerfile: Dockerfile
             target: base
         ports:
-            - "${PORT}:80"
+            - "8080:80"
+        env_file: .env
         volumes:
             - app-files:/var/www/html/glpi/files
             - app-config:/var/www/html/glpi/config
@@ -14,16 +15,16 @@ services:
     db:
         image: mysql:8.4.3
         environment:
-            - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+            - "MYSQL_ROOT_PASSWORD=password"
         volumes:
             - db-data:/var/lib/mysql
-    phpmyadmin:
-        image: phpmyadmin:latest
-        container_name: phpmyadmin
-        ports:
-           - 8080:80
-        environment:
-            - PMA_ARBITRARY=1
+    # phpmyadmin:
+    #     image: phpmyadmin:latest
+    #     container_name: phpmyadmin
+    #     ports:
+    #        - 8080:80
+    #     environment:
+    #         - PMA_ARBITRARY=1
 volumes:
     db-data:
     app-files:
