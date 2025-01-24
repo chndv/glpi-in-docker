@@ -1,9 +1,9 @@
-FROM php:8.3.0-fpm-alpine AS base
+FROM php:8.2.0-fpm-alpine AS base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
-LABEL org.opencontainers.image.version="10.0.17"
+LABEL org.opencontainers.image.version="10.0.6"
 
-ARG GLPI_VERSION="10.0.17"
+ARG GLPI_VERSION="10.0.6"
 
 # Установка зависимостей docker-entrypoint.sh
 RUN apk add --no-cache \
@@ -40,8 +40,7 @@ RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
 COPY default.conf /etc/nginx/http.d/default.conf
 ## php, cron
 RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
-    && echo "* * * * * www-data /usr/local/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root \
-    && 00 * * * * cd /var/www/html && ./bin/console -n glpi:ldap:synchronize_users
+    && echo "* * * * * www-data /usr/local/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root
 
 EXPOSE 80/tcp
 
