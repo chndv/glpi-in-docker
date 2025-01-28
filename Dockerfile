@@ -40,7 +40,7 @@ COPY default.conf /etc/nginx/http.d/default.conf
 ## php, cron
 RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
     && echo "* * * * * www-data /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root \
-    && echo "* * * * * www-data /usr/local/bin/php /var/www/glpi/bin/console --no-interaction ldap:synchronize_users &>/dev/null" >> /etc/crontabs/root
+    && echo "0 * * * * www-data /usr/local/bin/php /var/www/glpi/bin/console --no-interaction ldap:synchronize_users &>/dev/null" >> /etc/crontabs/root
 
 EXPOSE 80/tcp
 
