@@ -1,5 +1,5 @@
 #!/bin/bash
-crond -b
+crond -b -l 2
 nginx
 
 exec "$@"

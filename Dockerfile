@@ -5,6 +5,8 @@ LABEL org.opencontainers.image.version="10.0.17"
 
 ARG GLPI_VERSION="10.0.17"
 
+ENV TZ=Europe/Moscow
+
 # Скачивание кода GLPI
 ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
 
@@ -21,7 +23,7 @@ RUN \
     && apk add nginx \
     && apk add runuser \
     # Установка зависимостей docker-entrypoint.sh
-    && apk add bash \
+    && apk add --no-cache bash tzdata \
     # Очистка кешей apk
     && rm -rf /var/cache/apk/*
 
@@ -39,8 +41,8 @@ RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/ \
 COPY default.conf /etc/nginx/http.d/default.conf
 ## php, cron
 RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
-    && echo "* * * * * www-data /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root \
-    && echo "0 * * * * www-data /usr/local/bin/php /var/www/glpi/bin/console --no-interaction ldap:synchronize_users &>/dev/null" >> /etc/crontabs/root
+    && echo "* * * * * /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/www-data \
+    && echo "0 * * * * /usr/local/bin/php /var/www/glpi/bin/console --no-interaction ldap:synchronize_users &>/dev/null" >> /etc/crontabs/www-data
 
 EXPOSE 80/tcp
 

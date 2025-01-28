@@ -7,6 +7,8 @@ services:
             target: base
         ports:
             - "80:80"
+        environment:
+            - TZ=Europe/Moscow
         volumes:
             - app-files:/var/www/glpi/files
             - app-config:/var/www/glpi/config
