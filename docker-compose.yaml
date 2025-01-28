@@ -6,13 +6,13 @@ services:
             dockerfile: Dockerfile
             target: base
         ports:
-            - "8080:80"
+            - "80:80"
         env_file: .env
         volumes:
-            - app-files:/var/www/html/glpi/files
-            - app-config:/var/www/html/glpi/config
-            - app-plugins:/var/www/html/glpi/plugins
-            - app-marketplace:/var/www/html/glpi/marketplace
+            - app-files:/var/www/glpi/files
+            - app-config:/var/www/glpi/config
+            - app-plugins:/var/www/glpi/plugins
+            - app-marketplace:/var/www/glpi/marketplace
     db:
         image: mysql:8.4.3
         environment:

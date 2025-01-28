@@ -5,18 +5,12 @@ LABEL org.opencontainers.image.version="10.0.6"
 
 ARG GLPI_VERSION="10.0.6"
 
-# Установка зависимостей docker-entrypoint.sh
-RUN apk add --no-cache \
-    bash
-
-WORKDIR /var/www/html/glpi
-
-# Скачивание
+# Скачивание кода GLPI
 ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
 
 # Установка пакетов
-RUN apk update \
-    && apk add libzip-dev libpng-dev && docker-php-ext-install gd \
+RUN \
+    apk add libzip-dev libpng-dev && docker-php-ext-install gd \
     && apk add icu-dev && docker-php-ext-install intl \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install bz2 \
@@ -26,13 +20,18 @@ RUN apk update \
     && apk add openldap-dev && docker-php-ext-install ldap \
     && apk add nginx \
     && apk add runuser \
+    # Установка зависимостей docker-entrypoint.sh
+    && apk add bash \
+    # Очистка кешей apk
     && rm -rf /var/cache/apk/*
 
+WORKDIR /var/www/glpi
+
 # Распаковка кода GLPI
-RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
-    && chown -R www-data:www-data /var/www/html/glpi \
+RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/ \
+    && chown -R www-data:www-data /var/www/glpi \
     # Закомментировать эту строку, если нужен графический метод установки 
-    && rm -f /var/www/html/glpi/install/install.php \
+    && rm -f /var/www/glpi/install/install.php \
     && rm -rf /src
 
 # Настройка пакетов
@@ -40,7 +39,7 @@ RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/html \
 COPY default.conf /etc/nginx/http.d/default.conf
 ## php, cron
 RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
-    && echo "* * * * * www-data /usr/local/bin/php /var/www/html/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root
+    && echo "* * * * * www-data /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/root
 
 EXPOSE 80/tcp
 
