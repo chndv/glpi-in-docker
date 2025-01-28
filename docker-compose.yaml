@@ -1,13 +1,12 @@
 services:
     glpi:
-        image: glpi:10.0.6-alpine
+        image: glpi:10.0.17-alpine
         build:
             context: .
             dockerfile: Dockerfile
             target: base
         ports:
             - "80:80"
-        env_file: .env
         volumes:
             - app-files:/var/www/glpi/files
             - app-config:/var/www/glpi/config

@@ -1,9 +1,9 @@
-FROM php:8.2.0-fpm-alpine AS base
+FROM php:8.3.0-fpm-alpine AS base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
-LABEL org.opencontainers.image.version="10.0.6"
+LABEL org.opencontainers.image.version="10.0.17"
 
-ARG GLPI_VERSION="10.0.6"
+ARG GLPI_VERSION="10.0.17"
 
 # Скачивание кода GLPI
 ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
