@@ -5,6 +5,7 @@ services:
             context: .
             dockerfile: Dockerfile
             target: base
+        restart: on-failure
         ports:
             - "80:80"
         environment:
