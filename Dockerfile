@@ -1,6 +1,6 @@
 FROM php:8.3.0-fpm-alpine AS base
 
-LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@realweb.ru>"
+LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
 LABEL org.opencontainers.image.version="10.0.17"
 
 ARG GLPI_VERSION="10.0.17"
@@ -37,8 +37,10 @@ RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/ \
     && rm -rf /src
 
 # Настройка пакетов
-## nginx
-COPY default.conf /etc/nginx/http.d/default.conf
+# Caddy
+RUN apk add --no-cache caddy openrc
+RUN rc-update add caddy default
+COPY Caddyfile /etc/caddy/Caddyfile
 ## php, cron
 RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
     && echo "* * * * * /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/www-data \
@@ -51,4 +53,4 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD php-fpm
+CMD caddy run --config /etc/caddy/Caddyfile
