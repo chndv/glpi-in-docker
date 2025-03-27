@@ -48,10 +48,6 @@ WORKDIR /var/www/glpi
 RUN apk add --no-cache caddy openrc
 RUN rc-update add caddy default
 COPY Caddyfile /etc/caddy/Caddyfile
-## php, cron
-RUN echo "session.cookie_httponly = on" >>/usr/local/etc/php/conf.d/php.ini \
-    && echo "* * * * * /usr/local/bin/php /var/www/glpi/front/cron.php &>/dev/null" >>/etc/crontabs/www-data \
-    && echo "0 * * * * /usr/local/bin/php /var/www/glpi/bin/console --no-interaction ldap:synchronize_users &>/dev/null" >> /etc/crontabs/www-data
 
 EXPOSE 80/tcp
 
