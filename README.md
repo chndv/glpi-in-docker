@@ -14,5 +14,5 @@
     
     Например, такой командой можно инициализировать базу данных `docker compose exec -it glpi runuser -u www-data -- php bin/console db:install --db-host=db --db-name=glpi --db-user=root --db-password=password --default-language=en_US --no-telemetry --no-interaction`
 
-    > [!CAUTION]
-    > Важно запускать команды от имени www-data, чтобы устанавливались верные разрешения на файлы.
+> [!CAUTION]
+> Важно запускать команды от имени www-data, чтобы устанавливались верные разрешения на файлы.
