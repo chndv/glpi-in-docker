@@ -1,6 +1,6 @@
 FROM alpine as downloader
 
-ARG GLPI_VERSION="10.0.17"
+ARG GLPI_VERSION="10.0.18"
 
 RUN mkdir /opt/src
 
@@ -15,7 +15,7 @@ RUN tar -xzf glpi-${GLPI_VERSION}.tgz -C /opt/src
 FROM php:8.3.0-fpm-alpine AS base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
-LABEL org.opencontainers.image.version="10.0.17"
+LABEL org.opencontainers.image.version="10.0.18"
 
 ENV TZ=Europe/Moscow
 

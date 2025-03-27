@@ -1,6 +1,6 @@
 services:
     glpi:
-        image: glpi:10.0.17-alpine-caddy
+        image: glpi:10.0.18-alpine-caddy
         build:
             context: .
             dockerfile: Dockerfile
