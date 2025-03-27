@@ -11,10 +11,7 @@ services:
         environment:
             - TZ=Europe/Moscow
         volumes:
-            - app-files:/var/www/glpi/files
-            - app-config:/var/www/glpi/config
-            - app-plugins:/var/www/glpi/plugins
-            - app-marketplace:/var/www/glpi/marketplace
+            - app-files:/var/www/glpi
     db:
         image: mysql:8.4.3
         environment:
