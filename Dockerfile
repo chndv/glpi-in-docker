@@ -1,14 +1,23 @@
+FROM alpine as downloader
+
+ARG GLPI_VERSION="10.0.17"
+
+RUN mkdir /opt/src
+
+WORKDIR /opt/src
+
+ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /opt/src
+
+RUN tar -xzf glpi-${GLPI_VERSION}.tgz -C /opt/src
+
+### 
+
 FROM php:8.3.0-fpm-alpine AS base
 
 LABEL org.opencontainers.image.authors="Stanislav Chindyaev <chndv@tuta.io>"
 LABEL org.opencontainers.image.version="10.0.17"
 
-ARG GLPI_VERSION="10.0.17"
-
 ENV TZ=Europe/Moscow
-
-# Скачивание кода GLPI
-ADD https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz /src/
 
 # Установка пакетов
 RUN \
@@ -27,14 +36,12 @@ RUN \
     # Очистка кешей apk
     && rm -rf /var/cache/apk/*
 
-WORKDIR /var/www/glpi
 
-# Распаковка кода GLPI
-RUN tar -xzf /src/glpi-${GLPI_VERSION}.tgz -C /var/www/ \
-    && chown -R www-data:www-data /var/www/glpi \
-    # Закомментировать эту строку, если нужен графический метод установки 
-    && rm -f /var/www/glpi/install/install.php \
-    && rm -rf /src
+COPY --from=0 /opt/src/glpi /var/www/glpi
+
+RUN chown -R www-data:www-data /var/www/glpi
+
+WORKDIR /var/www/glpi
 
 # Настройка пакетов
 # Caddy
