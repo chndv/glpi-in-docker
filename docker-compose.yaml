@@ -1,17 +1,21 @@
 services:
     glpi:
-        image: glpi:10.0.18-alpine-caddy
         build:
             context: .
             dockerfile: Dockerfile
             target: base
         restart: on-failure
+        deploy:
+            
         ports:
-            - "80:80"
+            - "8080:80"
         environment:
             - TZ=Europe/Moscow
+            - XDG_DATA_HOME=/var/lib/caddy/data
+            - XDG_CONFIG_HOME=/var/lib/caddy/config
         volumes:
             - app-files:/var/www/glpi
+            - caddy-data:/var/lib/caddy
     db:
         image: mysql:8.4.3
         environment:
@@ -21,6 +25,4 @@ services:
 volumes:
     db-data:
     app-files:
-    app-config:
-    app-plugins:
-    app-marketplace:
+    caddy-data:
