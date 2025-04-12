@@ -30,18 +30,15 @@ RUN \
     && apk add --no-cache bash \
     tzdata \
     supervisor \
+    runuser \
     caddy \
     && rm -rf /var/cache/apk/*
 
-COPY --from=downloader /opt/src/glpi /var/www/glpi
+COPY --from=downloader --chown=www-data:www-data /opt/src/glpi /var/www/glpi
 
-RUN chown -R www-data:www-data /var/www/glpi
+COPY --chown=caddy:caddy ./configs/caddy/Caddyfile /etc/caddy/Caddyfile
 
-WORKDIR /var/www/glpi
-
-COPY Caddyfile /etc/caddy/Caddyfile
-
-COPY supervisord.conf /etc/supervisor/supervisord.conf
+COPY --chown=root:root ./configs/supervisor.d /etc/supervisor.d
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
@@ -51,4 +48,4 @@ EXPOSE 80/tcp
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
